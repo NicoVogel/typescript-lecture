@@ -6,19 +6,32 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint-non-code-files": "prettier --check \"**/*.{json,yaml,yml,md}\"",
-    "format-non-code-files": "prettier --write \"**/*.{json,yaml,yml,md}\""
+    "lint": "concurrently \"bun lint:non-code\" \"bun lint:pug\" \"bun lint:code\"",
+    "format": "concurrently \"bun format:non-code\" \"bun format:pug\" \"bun format:code\"",
+    "lint:non-code": "prettier --check \"**/*.{json,yaml,yml,md}\"",
+    "format:non-code": "prettier --write \"**/*.{json,yaml,yml,md}\"",
+    "lint:code": "eslint --ext .ts,.js .",
+    "format:code": "eslint --ext .ts,.js . --fix",
+    "lint:pug": "prettier --check \"**/*.pug\"",
+    "format:pug": "prettier --write \"**/*.pug\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@prettier/plugin-pug": "^3.0.0",
     "@types/reveal.js": "^4.4.5",
+    "@typescript-eslint/eslint-plugin": "^6.9.1",
+    "@typescript-eslint/parser": "^6.9.1",
+    "concurrently": "^8.2.2",
     "eslint": "^8.52.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
     "prettier": "^3.0.3",
     "pug": "^3.0.2",
     "typescript": "^5.2.2",
-    "vite": "^4.5.0"
+    "vite": "^4.5.0",
+    "vite-plugin-pug": "^0.3.2"
   },
   "dependencies": {
     "reveal.js": "^5.0.1"

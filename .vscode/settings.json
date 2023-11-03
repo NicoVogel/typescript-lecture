@@ -18,6 +18,9 @@
   "[markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[pug]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "eslint.options": {
     "extensions": [".js", ".jsx", ".ts", ".tsx", ".html"]
   },
@@ -30,5 +33,5 @@
   ],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
-  },
+  }
 }
