@@ -1,0 +1,38 @@
+name: publish slides
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - src/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      # in syninlinec with devcontainer.json
+      image: mcr.microsoft.com/devcontainers/base:jammy
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Setup bun ⚙️
+      - uses: oven-sh/setup-bun@v1
+      - name: Install 📦
+        run: |
+          bun install
+      - name: Build 🏗️
+        run: |
+          bun run build
+      - name: Rewrite base href 🛠️
+        uses: SteveSandersonMS/ghaction-rewrite-base-href@v1
+        with:
+          html_path: 'dist/index.html'
+          base_href: '/typescript-lecture/'
+      - name: Deploy 🚀
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
