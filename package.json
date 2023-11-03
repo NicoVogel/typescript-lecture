@@ -1,0 +1,26 @@
+{
+  "name": "typescript-lecture",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint-non-code-files": "prettier --check \"**/*.{json,yaml,yml,md}\"",
+    "format-non-code-files": "prettier --write \"**/*.{json,yaml,yml,md}\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/reveal.js": "^4.4.5",
+    "eslint": "^8.52.0",
+    "prettier": "^3.0.3",
+    "pug": "^3.0.2",
+    "typescript": "^5.2.2",
+    "vite": "^4.5.0"
+  },
+  "dependencies": {
+    "reveal.js": "^5.0.1"
+  }
+}
