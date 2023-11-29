@@ -9,10 +9,10 @@ import Notes from 'reveal.js/plugin/notes/notes.esm.js';
 
 import 'reveal.js/dist/reset.css';
 import 'reveal.js/dist/reveal.css';
-import 'reveal.js/dist/theme/white.css';
 import 'reveal.js/plugin/highlight/monokai.css';
 
 import './reference';
+import './theme/custom.scss';
 
 Reveal.initialize({
   hash: true,

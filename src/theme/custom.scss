@@ -1,0 +1,58 @@
+// Default mixins and settings -----------------
+@import "reveal.js/css/theme/template/mixins";
+// ---------------------------------------------
+
+@import './font';
+@import './color';
+
+// Vertical spacing between blocks of text
+$blockMargin: 1em;
+
+// text settings
+$textFont: 'Geist Sans', Helvetica, sans-serif;
+$textSize: 2em;
+$textColor: $gray-600;
+$textWeight: 300;
+//TODO
+$selectionColor: #fff;
+
+// heading settings
+$headingFont: 'Geist Sans', Helvetica, sans-serif;
+$heading1Size: 2.5em;
+$heading2Size: 1.6em;
+$heading3Size: 1.3em;
+$heading4Size: 1.0em;
+$headingColor: $gray-900;
+// Colors used for UI elements that are overlaid on top of
+// the presentation
+$overlayElementBgColor: 240, 240, 240;
+$overlayElementFgColor: 0, 0, 0;
+$headingWeight: 600;
+$headingMargin: 0 0 $blockMargin 0;
+$headingLineHeight: 1.2;
+$headingLetterSpacing: normal;
+$headingTextTransform: none;
+$headingTextShadow: none;
+
+// code settings
+$codeFont: 'Geist Mono', monospace;
+
+// link settings
+$linkColor: $indigo-600;
+$linkColorHover: $indigo-400;
+
+// background settings
+$backgroundColor: $white;
+$selectionBackgroundColor: rgba( $linkColor, 0.75 );
+
+// Colors used for UI elements that are overlaid on top of
+// the presentation
+$overlayElementBgColor: 240, 240, 240;
+$overlayElementFgColor: 0, 0, 0;
+
+@mixin bodyBackground() {
+	background: $backgroundColor;
+}
+
+@import "./theme";
+@import "./exposer"

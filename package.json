@@ -29,10 +29,12 @@
     "http-server": "^14.1.1",
     "marked": "^11.0.0",
     "prettier": "^3.0.3",
+    "sass": "^1.69.5",
     "typescript": "^5.2.2",
     "vite": "^4.5.0"
   },
   "dependencies": {
+    "geist": "^1.0.0",
     "reveal.js": "^5.0.1"
   }
 }
