@@ -30,7 +30,9 @@
     "vite": "^4.5.0"
   },
   "dependencies": {
+    "@types/node": "^20.10.1",
     "http-server": "^14.1.1",
+    "marked": "^11.0.0",
     "reveal.js": "^5.0.1"
   }
 }

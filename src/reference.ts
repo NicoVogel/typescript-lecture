@@ -1,6 +1,6 @@
-import intro from './slides/intro.md?url';
-import overview from './slides/overview.md?url';
-import test from './slides/test.md?url';
+import intro from './slides/intro.md';
+import overview from './slides/overview.md';
+import test from './slides/test.md';
 
 addMarkdownSlides(intro);
 addMarkdownSlides(overview);

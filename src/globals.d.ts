@@ -1,1 +1,1 @@
-declare module '*.md?url';
+declare module '*.md';

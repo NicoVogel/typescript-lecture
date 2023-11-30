@@ -25,7 +25,8 @@ This is a clear must do and it should not be open to debate.
 
 ---
 
-![Confused Meme](img/confused-meme.jpg){style="background: white"}
+![Confused Meme](img/confused-meme.jpg)
+<!-- .element: style="background: white"-->
 
 ---
 <!-- .element: data-auto-animate -->
