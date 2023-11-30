@@ -26,15 +26,19 @@ This is a clear must do and it should not be open to debate.
 ---
 
 ![Confused Meme](img/confused-meme.jpg)
+
 <!-- .element: style="background: white"-->
 
 ---
+
 <!-- .element: data-auto-animate -->
+
 ## How to test behavior?
 
 ---
 
 <!-- .element: data-auto-animate -->
+
 ## How to test behavior?
 
 1. ensure that the system is in the correct state (Given)
@@ -42,6 +46,7 @@ This is a clear must do and it should not be open to debate.
 ---
 
 <!-- .element: data-auto-animate -->
+
 ## How to test behavior?
 
 1. ensure that the system is in the correct state (Given)
@@ -50,6 +55,7 @@ This is a clear must do and it should not be open to debate.
 ---
 
 <!-- .element: data-auto-animate -->
+
 ## How to test behavior?
 
 1. ensure that the system is in the correct state (Given)
@@ -59,6 +65,7 @@ This is a clear must do and it should not be open to debate.
 ---
 
 <!-- .element: data-auto-animate -->
+
 ## How to test behavior?
 
 1. ensure that the system is in the correct state (Given)
@@ -80,14 +87,13 @@ export class Router {
 
   constructor(private routes: Route[]) {
     if (routes.length === 0) {
-      throw new Error("Business Error, Router cannot function without routes.");
+      throw new Error('Business Error, Router cannot function without routes.');
     }
     this._currentRoute = this.getDefaultRoute();
   }
 
   public handleUrlChange(url: string) {
-    const route = this.findRoute(this.routes, url)
-      ?? this.getDefaultRoute();
+    const route = this.findRoute(this.routes, url) ?? this.getDefaultRoute();
     if (route === this._currentRoute) {
       return;
     }
@@ -109,26 +115,26 @@ export class Router {
 }
 
 // src/router.spec.ts
-describe("Router", () => {
-  it("should fail fast, when no routes are provided", () => {
+describe('Router', () => {
+  it('should fail fast, when no routes are provided', () => {
     expect(() => new Router([])).to.throw();
   });
 
-  it("should change route", () => {
-    const routes = [{ path: "/user" }, { path: "/profile" }];
+  it('should change route', () => {
+    const routes = [{path: '/user'}, {path: '/profile'}];
     const router = new Router(routes);
 
-    router.handleUrlChange("/profile");
+    router.handleUrlChange('/profile');
 
-    expect(router.currentRoute).to.equal({ path: "/profile" });
+    expect(router.currentRoute).to.equal({path: '/profile'});
   });
 
-  it("should not change current route, if it is the same route", () => {
-    const routes = [{ path: "/user" }, { path: "/profile" }];
+  it('should not change current route, if it is the same route', () => {
+    const routes = [{path: '/user'}, {path: '/profile'}];
     const router = new Router(routes);
     const currentRoute = router.currentRoute;
 
-    router.handleUrlChange("/user");
+    router.handleUrlChange('/user');
 
     expect(router.currentRoute).to.equal(currentRoute);
   });
