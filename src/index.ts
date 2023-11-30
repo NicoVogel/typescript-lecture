@@ -1,12 +1,19 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import './globals';
 import Reveal from 'reveal.js';
+// @ts-ignore
 import Markdown from 'reveal.js/plugin/markdown/markdown.esm.js';
+// @ts-ignore
 import Highlight from 'reveal.js/plugin/highlight/highlight.esm.js';
+// @ts-ignore
 import Notes from 'reveal.js/plugin/notes/notes.esm.js';
 
 import 'reveal.js/dist/reset.css';
 import 'reveal.js/dist/reveal.css';
 import 'reveal.js/dist/theme/white.css';
 import 'reveal.js/plugin/highlight/monokai.css';
+
+import './reference';
 
 Reveal.initialize({
   hash: true,

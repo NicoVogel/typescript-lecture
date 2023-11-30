@@ -3,5 +3,5 @@
     "plugin:prettier/recommended",
     "plugin:@typescript-eslint/recommended"
   ],
-  "ignorePatterns": ["dist"]
+  "ignorePatterns": ["dist", "*.md"]
 }
