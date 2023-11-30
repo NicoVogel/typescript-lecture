@@ -9,7 +9,8 @@ import Notes from 'reveal.js/plugin/notes/notes.esm.js';
 
 import 'reveal.js/dist/reset.css';
 import 'reveal.js/dist/reveal.css';
-import 'reveal.js/plugin/highlight/monokai.css';
+// choose theme from here: https://highlightjs.org/examples
+import 'highlight.js/styles/github-dark.css';
 
 import './reference';
 import './theme/custom.scss';
