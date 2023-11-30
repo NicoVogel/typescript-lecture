@@ -1,8 +1,10 @@
 import intro from './slides/intro.md?url';
 import overview from './slides/overview.md?url';
+import test from './slides/test.md?url';
 
 addMarkdownSlides(intro);
 addMarkdownSlides(overview);
+addMarkdownSlides(test);
 
 function addMarkdownSlides(path: string): void {
   const slides = getSlidesDiv();

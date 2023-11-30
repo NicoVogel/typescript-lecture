@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import './globals';
 import Reveal from 'reveal.js';
 // @ts-ignore
 import Markdown from 'reveal.js/plugin/markdown/markdown.esm.js';
