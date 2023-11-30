@@ -18,6 +18,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^20.10.1",
     "@types/reveal.js": "^4.4.5",
     "@typescript-eslint/eslint-plugin": "^6.9.1",
     "@typescript-eslint/parser": "^6.9.1",
@@ -25,14 +26,13 @@
     "eslint": "^8.52.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
+    "http-server": "^14.1.1",
+    "marked": "^11.0.0",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2",
     "vite": "^4.5.0"
   },
   "dependencies": {
-    "@types/node": "^20.10.1",
-    "http-server": "^14.1.1",
-    "marked": "^11.0.0",
     "reveal.js": "^5.0.1"
   }
 }
