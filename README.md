@@ -2,4 +2,5 @@
 
 # TODO:
 
-- write validation to check that all markdown file references actually exist. should show warning if a markdown file is not used
+- make it possible to see images in dev mode
+- implement a validation logic that checks if a still works

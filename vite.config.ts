@@ -16,22 +16,26 @@ function markdownImagePlugin(): PluginOption {
     name: 'markdown-image-plugin',
     transform: {
       order: 'pre',
-      async handler(code, id) {
+      async handler(code, id, options) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        const isBuild = !options ? true : options.command === 'build';
         if (path.extname(id) !== '.md') {
           return null;
         }
         // Parse the Markdown file
         const tokens = marked.lexer(code);
 
-        const update = async (tokens: Token[]): Promise<string> => {
-          let updatedFile = '';
+        const processTokens = async (tokens: Token[]): Promise<string> => {
+          let updatedCode = '';
           for (const token of tokens) {
             if (token.type !== 'image') {
               // construct the markdown file
-              if ('tokens' in token && token.tokens) {
-                updatedFile += await update(token.tokens);
+              if (token.type === 'paragraph') {
+                updatedCode += await processTokens(token.tokens ?? []);
+                updatedCode += '\n';
               } else {
-                updatedFile += token.raw;
+                updatedCode += token.raw;
               }
               continue;
             }
@@ -56,21 +60,24 @@ function markdownImagePlugin(): PluginOption {
               token.href,
               `/images/${path.basename(imagePath)}`
             );
-            updatedFile += updatedImage;
+            updatedCode += updatedImage;
           }
-          return updatedFile;
+          return updatedCode;
         };
-        const source = await update(tokens);
+        const updatedMarkdown = await processTokens(tokens);
 
-        //emit the markdown file as an asset
-        this.emitFile({
-          type: 'asset',
-          fileName: `slides/${path.basename(id)}`,
-          source,
-        });
+        if (isBuild) {
+          this.emitFile({
+            type: 'asset',
+            fileName: `slides/${path.basename(id)}`,
+            source: updatedMarkdown,
+          });
+          return `export default "/slides/${path.basename(id)}";`;
+        }
 
-        // return an default exported string that contains the path to the markdown file
-        return `export default "/slides/${path.basename(id)}";`;
+        // Convert the absolute path to a relative path
+        const relativePath = path.relative(process.cwd(), id);
+        return `export default "${relativePath}"`;
       },
     },
   };
