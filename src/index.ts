@@ -13,7 +13,8 @@ import 'reveal.js/dist/reveal.css';
 import 'highlight.js/styles/github-dark.css';
 
 import './reference';
-import './theme/custom.scss';
+import './theme/theme.scss';
+// import './layouts/agenda.scss';
 
 Reveal.initialize({
   hash: true,
