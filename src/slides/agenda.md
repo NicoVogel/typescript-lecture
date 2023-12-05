@@ -26,6 +26,7 @@
 - Address
 <!-- .element class="highlight" -->
 - Street
+<!-- .element data-id="street"-->
 - Something else
 
 ---
@@ -36,6 +37,7 @@
 - Example
 - Address
 - Street
+<!-- .element data-id="street"-->
 <!-- .element class="highlight" -->
    - description
 - Something else
@@ -48,6 +50,7 @@
 - Example
 - Address
 - Street
+<!-- .element data-id="street"-->
 - Something else
 <!-- .element class="highlight" -->
 

@@ -1,38 +1,37 @@
-@import '../theme/color'; // Adjust the path as necessary
+@import '../theme/color';
+@import '../theme/variables';
 
 .agenda {
-  max-width: 60rem;
-  width: 100%;
-  margin: auto;
-
   ul {
-    max-width: 50rem;
     width: 100%;
     margin: auto;
     list-style: none;
-    padding: 0;
-    margin: 0;
 
     li {
-      margin-bottom: 0.5rem;
-      padding: 0.5rem;
-      background-color: var(--quiet); // Use quiet color variable
-      color: var(--text); // Use text color variable
+      margin-bottom: $blockSize;
+      padding: calc($blockSize / 2);
+      background-color: var(--r-theme-light-accent); // Use secondary background color variable
+      color: var(--r-theme-light-shades); // Use on-secondary color variable
+      border-radius: 0.5rem;
+      display: flex;
+      gap: calc($blockSize * 3);
+
+      &:last-child {
+        margin-bottom: 0;
+      }
 
       &.highlight {
-        background-color: var(--primary); // Use primary color variable
-        border-radius: 0.5rem;
+        background-color: var(--r-theme-main-brand-color); // Use primary color variable
       }
 
       ul {
         list-style: none;
         padding: 0;
-        margin-left: 1rem;
-        margin-top: 0.25rem;
 
         li {
           font-size: 0.875rem;
-          color: var(--secondary); // Use secondary color variable
+          background-color: transparent;
+          padding: 0;
         }
       }
     }

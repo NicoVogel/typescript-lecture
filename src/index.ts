@@ -14,7 +14,7 @@ import 'highlight.js/styles/github-dark.css';
 
 import './reference';
 import './theme/theme.scss';
-// import './layouts/agenda.scss';
+import './layouts/agenda.scss';
 
 Reveal.initialize({
   hash: true,
