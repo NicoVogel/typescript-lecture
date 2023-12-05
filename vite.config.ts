@@ -2,6 +2,7 @@ import {PluginOption, defineConfig} from 'vite';
 
 export default defineConfig({
   plugins: [markdownImagePlugin()],
+  base: './',
   build: {
     minify: false,
   },
