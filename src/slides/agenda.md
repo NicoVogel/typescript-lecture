@@ -1,4 +1,5 @@
 <!-- .element data-auto-animate class="agenda"-->
+
 # Agenda
 
 - Example
@@ -9,6 +10,7 @@
 ---
 
 <!-- .element data-auto-animate class="agenda"-->
+
 # Agenda
 
 - Example
@@ -20,6 +22,7 @@
 ---
 
 <!-- .element data-auto-animate class="agenda"-->
+
 # Agenda
 
 - Example
@@ -32,19 +35,21 @@
 ---
 
 <!-- .element data-auto-animate class="agenda"-->
+
 # Agenda
 
 - Example
 - Address
 - Street
-<!-- .element data-id="street"-->
-<!-- .element class="highlight" -->
-   - description
+  <!-- .element data-id="street"-->
+  <!-- .element class="highlight" -->
+  - description
 - Something else
 
 ---
 
 <!-- .element data-auto-animate class="agenda"-->
+
 # Agenda
 
 - Example
@@ -53,4 +58,3 @@
 <!-- .element data-id="street"-->
 - Something else
 <!-- .element class="highlight" -->
-
