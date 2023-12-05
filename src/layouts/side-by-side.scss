@@ -1,0 +1,9 @@
+@import '../theme/variables';
+
+.side-by-side {
+  // grid with two columns
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: $blockSize;
+}
