@@ -1,0 +1,39 @@
+@import '../theme/color';
+@import '../theme/variables';
+
+.agenda {
+  ul {
+    width: 100%;
+    margin: auto;
+    list-style: none;
+
+    li {
+      margin-bottom: $blockSize;
+      padding: calc($blockSize / 2);
+      background-color: var(--r-theme-light-accent); // Use secondary background color variable
+      color: var(--r-theme-light-shades); // Use on-secondary color variable
+      border-radius: 0.5rem;
+      display: flex;
+      gap: calc($blockSize * 3);
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      &.highlight {
+        background-color: var(--r-theme-main-brand-color); // Use primary color variable
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+
+        li {
+          font-size: 0.875rem;
+          background-color: transparent;
+          padding: 0;
+        }
+      }
+    }
+  }
+}

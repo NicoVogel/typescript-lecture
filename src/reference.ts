@@ -1,7 +1,11 @@
 import intro from './slides/intro.md';
 import overview from './slides/overview.md';
 import test from './slides/test.md';
+import agenda from './slides/agenda.md';
+import example from './slides/example.md';
 
+addMarkdownSlides(agenda);
+addMarkdownSlides(example);
 addMarkdownSlides(intro);
 addMarkdownSlides(overview);
 addMarkdownSlides(test);

@@ -1,34 +1,32 @@
-@import './font';
-@import './color';
+@import './variables';
 
 .reveal-viewport {
-	@include bodyBackground();
-	background-color: var(--r-background-color);
+	background-color: var(--r-theme-light-shades);
 }
 
 .reveal {
-	font-family: var(--r-text-font);
-	font-size: var(--r-text-size);
-	font-weight: var(--r-text-weight);
-	color: var(--r-text-color);
+	font-family: $textFont;
+	font-size: $textSize;
+	font-weight: $textWeight;
+	color: var(--r-theme-dark-shades);
 }
 
 .reveal ::selection {
-	color: var(--r-selection-color);
-	background: var(--r-selection-background-color);
+	color: var(--r-theme-dark-shades);
+	background: var(--r-theme-main-brand-color);
 	text-shadow: none;
 }
 
 .reveal ::-moz-selection {
-	color: var(--r-selection-color);
-	background: var(--r-selection-background-color);
+	color: var(--r-theme-dark-shades);
+	background: var(--r-theme-main-brand-color);
 	text-shadow: none;
 }
 
 .reveal .slides section,
 .reveal .slides section>section {
-	line-height: 1.3;
-	font-weight: inherit;
+	line-height: $textLineHeight;
+	font-weight: $textWeight;
 }
 
 /*********************************************
@@ -41,42 +39,28 @@
 .reveal h4,
 .reveal h5,
 .reveal h6 {
-	margin: var(--r-heading-margin);
-	color: var(--r-heading-color);
+	color: var(--r-theme-main-brand-color);
+	padding: 0;
+	padding-bottom: 0.3em;
 
-	font-family: var(--r-heading-font);
-	font-weight: var(--r-heading-font-weight);
-	line-height: var(--r-heading-line-height);
-	letter-spacing: var(--r-heading-letter-spacing);
-
-	text-transform: var(--r-heading-text-transform);
-	text-shadow: var(--r-heading-text-shadow);
+	font-family: $textFont;
+	font-weight: $headingWeight;
+	line-height: $headingLineHeight;
 
 	word-wrap: break-word;
 }
 
-.reveal h1 {font-size: var(--r-heading1-size); }
-.reveal h2 {font-size: var(--r-heading2-size); }
-.reveal h3 {font-size: var(--r-heading3-size); }
-.reveal h4 {font-size: var(--r-heading4-size); }
+.reveal h1 { font-size: $heading1Size; }
+.reveal h2 { font-size: $heading2Size; }
+.reveal h3 { font-size: $heading3Size; }
+.reveal h4 { font-size: $heading4Size; }
 
 /*********************************************
  * OTHER
  *********************************************/
 
 .reveal p {
-	margin: var(--r-block-margin) 0;
-	line-height: 1.3;
-}
-
-/* Remove trailing margins after titles */
-.reveal h1:last-child,
-.reveal h2:last-child,
-.reveal h3:last-child,
-.reveal h4:last-child,
-.reveal h5:last-child,
-.reveal h6:last-child {
-	margin-bottom: 0;
+	line-height: $textLineHeight;
 }
 
 /* Ensure certain elements are never larger than the slide itself */
@@ -101,7 +85,8 @@
 	display: inline-block;
 
 	text-align: left;
-	margin: 0 0 0 1em;
+	margin: 0 0 0 $blockSize;
+	padding: 0 0 1em 0;
 }
 
 .reveal ol {
@@ -125,26 +110,22 @@
 .reveal ol ol,
 .reveal ol ul {
 	display: block;
-	margin-left: 40px;
 }
 
 .reveal dt {
 	font-weight: bold;
 }
 
-.reveal dd {
-	margin-left: 40px;
-}
-
 .reveal blockquote {
 	display: block;
 	position: relative;
 	width: 70%;
-	margin: var(--r-block-margin) auto;
-	padding: 5px;
+	margin: 0 auto;
+	padding: $blockSize;
 
 	font-style: italic;
-	background: rgba(255, 255, 255, 0.05);
+	background: var(--r-theme-light-accent);
+  color: var(--r-theme-light-shades);
 	box-shadow: 0px 0px 2px rgba(0,0,0,0.2);
 }
 	.reveal blockquote p:first-child,
@@ -160,27 +141,25 @@
 	display: block;
 	position: relative;
 	width: 90%;
-	margin: var(--r-block-margin) auto;
+	margin: 0 auto;
 
 	text-align: left;
-	font-size: 0.55em;
-	font-family: var(--r-code-font);
-	line-height: 1.2em;
+	font-size: 0.56em;
+	font-family: $codeFont;
+	line-height: $codeLineHeight;
 
 	word-wrap: break-word;
-
 	box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
 }
 
 .reveal code {
-	font-family: var(--r-code-font);
+	font-family: $codeFont;
 	text-transform: none;
 	tab-size: 2;
 }
 
 .reveal pre code {
 	display: block;
-	padding: 5px;
 	overflow: auto;
 	max-height: 400px;
 	word-wrap: normal;
@@ -221,6 +200,11 @@
 	text-align: right;
 }
 
+.reveal table thead th {
+	color: var(--r-theme-dark-accent);
+	border-color: var(--r-theme-dark-shades);
+}
+
 .reveal table tbody tr:last-child th,
 .reveal table tbody tr:last-child td {
 	border-bottom: none;
@@ -237,8 +221,8 @@
 
 .reveal small {
 	display: inline-block;
-	font-size: 0.6em;
-	line-height: 1.2em;
+	font-size: calc($textSize / 2);
+	line-height: calc($textLineHeight / 2);
 	vertical-align: top;
 }
 
@@ -247,7 +231,7 @@
 }
 
 .reveal img {
-	margin: var(--r-block-margin) 0;
+	padding: $blockSize 0;
 }
 
 
@@ -256,21 +240,19 @@
  *********************************************/
 
 .reveal a {
-	color: var(--r-link-color);
-	text-decoration: none;
+	color: var(--r-theme-light-accent);
+	// text-decoration: none;
 	transition: color .15s ease;
 }
 	.reveal a:hover {
-		color: var(--r-link-color-hover);
+		color: var(--r-theme-dark-accent);
 		text-shadow: none;
 		border: none;
 	}
 
 .reveal .roll span:after {
 	color: #fff;
-	// background: darken( var(--r-link-color), 15% );
-	 background: var(--r-link-color-dark);
-
+	background: var(--r-theme-dark-accent);
 }
 
 
@@ -279,7 +261,7 @@
  *********************************************/
 
 .reveal .r-frame {
-	border: 4px solid var(--r-text-color);
+	border: 4px solid var(--r-theme-dark-shades);
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 }
 
@@ -288,7 +270,7 @@
 }
 
 .reveal a:hover .r-frame {
-	border-color: var(--r-link-color);
+	border-color: var(--r-theme-dark-accent);
 	box-shadow: 0 0 20px rgba(0, 0, 0, 0.55);
 }
 
@@ -298,7 +280,7 @@
  *********************************************/
 
 .reveal .controls {
-	color: var(--r-link-color);
+	color: var(--r-theme-dark-accent);
 }
 
 
@@ -308,15 +290,14 @@
 
 .reveal .progress {
 	background: rgba(0,0,0,0.2);
-	color: var(--r-link-color);
+	color: var(--r-theme-dark-accent);
 }
 
 /*********************************************
  * PRINT BACKGROUND
  *********************************************/
- @media print {
+@media print {
     .backgrounds {
-        background-color: var(--r-background-color);
+        background-color: var(--r-theme-light-shades);
     }
 }
-

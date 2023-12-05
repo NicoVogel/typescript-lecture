@@ -1,0 +1,46 @@
+@import './font';
+@import './color';
+
+// General Variables
+$blockSize: 1em;
+
+$codeFont: 'Geist Mono', monospace;
+$codeLineHeight: 1.3em;
+
+$textFont: 'Geist Sans', Helvetica, sans-serif;
+$textSize: 1.8em;
+$textWeight: 300;
+$textLineHeight: 1.3em;
+
+$heading1Size: 2.5em;
+$heading2Size: 1.6em;
+$heading3Size: 1.3em;
+$heading4Size: 1.0em;
+$headingWeight: 600;
+$headingLineHeight: 1.2em;
+
+// Adjust these color variables to your preferred values
+$light-shades: $zinc-50;
+$light-accent: #AFAAC6;
+$main-brand-color: #917C9C;
+$dark-accent: #9DA8AE;
+$dark-shades: #383B4B;
+
+// Light Theme Variables
+:root {
+    --r-theme-light-shades: #{$light-shades};
+    --r-theme-light-accent: #{$light-accent};
+    --r-theme-main-brand-color: #{$main-brand-color};
+    --r-theme-dark-accent: #{$dark-accent};
+    --r-theme-dark-shades: #{$dark-shades};
+}
+
+// Dark Theme Variables
+.dark {
+    // These colors can be adjusted to fit the dark theme aesthetics
+    --r-theme-light-shades: #{$dark-shades};
+    --r-theme-light-accent: #{$dark-accent};
+    --r-theme-main-brand-color: #{$main-brand-color};
+    --r-theme-dark-accent: #{$light-accent};
+    --r-theme-dark-shades: #{$light-shades};
+}

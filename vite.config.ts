@@ -39,6 +39,11 @@ function markdownImagePlugin(): PluginOption {
               }
               continue;
             }
+            if (token.href.startsWith('http')) {
+              // continue if the image is already a URL
+              updatedCode += token.raw;
+              continue;
+            }
 
             const imagePath = path.resolve(path.dirname(id), token.href);
 
