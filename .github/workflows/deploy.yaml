@@ -6,8 +6,10 @@ on:
       - main
     paths:
       - src/**
+      - public/**
       - index.html
       - .github/workflows/deploy.yaml
+      - vite.config.ts
 
 jobs:
   build:
