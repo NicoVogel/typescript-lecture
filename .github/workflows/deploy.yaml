@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - src/**
+      - index.html
+      - .github/workflows/deploy.yaml
 
 jobs:
   build:
