@@ -125,6 +125,7 @@
 
 	font-style: italic;
 	background: var(--r-theme-light-accent);
+  color: var(--r-theme-light-shades);
 	box-shadow: 0px 0px 2px rgba(0,0,0,0.2);
 }
 	.reveal blockquote p:first-child,
@@ -240,7 +241,7 @@
 
 .reveal a {
 	color: var(--r-theme-light-accent);
-	text-decoration: none;
+	// text-decoration: none;
 	transition: color .15s ease;
 }
 	.reveal a:hover {

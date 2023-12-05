@@ -39,8 +39,8 @@ $dark-shades: #383B4B;
 .dark {
     // These colors can be adjusted to fit the dark theme aesthetics
     --r-theme-light-shades: #{$dark-shades};
-    --r-theme-light-accent: #{$light-accent};
+    --r-theme-light-accent: #{$dark-accent};
     --r-theme-main-brand-color: #{$main-brand-color};
-    --r-theme-dark-accent: #{$dark-accent};
+    --r-theme-dark-accent: #{$light-accent};
     --r-theme-dark-shades: #{$light-shades};
 }
