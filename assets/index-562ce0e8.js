@@ -6816,13 +6816,24 @@ addMarkdownSlides(overview);
 addMarkdownSlides(test);
 function addMarkdownSlides(path) {
   const slides = getSlidesDiv();
+  const baseUrl = getBaseURL();
+  const fullPath = concatenatePaths(baseUrl, path);
   const next = document.createElement("section");
-  next.setAttribute("data-markdown", path);
+  next.setAttribute("data-markdown", fullPath);
   next.setAttribute("data-separator", "^-----\\n");
   next.setAttribute("data-separator-vertical", "^---\\n");
   next.setAttribute("data-separator-notes", "^{{Notes}}\\n");
   next.setAttribute("data-charset", "iso-8859-15");
   slides.appendChild(next);
+}
+function concatenatePaths(first, second) {
+  const trimmedFirst = first.replace(/\/+$/, "");
+  const trimmedSecond = second.replace(/^\/+/, "");
+  return `${trimmedFirst}/${trimmedSecond}`;
+}
+function getBaseURL() {
+  const base = document.querySelector("base");
+  return base ? base.getAttribute("href") || "" : "";
 }
 function getSlidesDiv() {
   const slides = [...document.getElementsByClassName("slides")][0];
