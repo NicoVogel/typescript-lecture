@@ -6809,7 +6809,9 @@ const overview = "/slides/overview.md";
 const test = "/slides/test.md";
 const agenda$1 = "/slides/agenda.md";
 const example = "/slides/example.md";
+const sideBySide$1 = "/slides/side-by-side.md";
 addMarkdownSlides(agenda$1);
+addMarkdownSlides(sideBySide$1);
 addMarkdownSlides(example);
 addMarkdownSlides(intro);
 addMarkdownSlides(overview);
@@ -6951,6 +6953,7 @@ observer.observe(document.body, { attributes: true });
 document.addEventListener("DOMContentLoaded", applyTheme);
 const theme = "";
 const agenda = "";
+const sideBySide = "";
 $$3.initialize({
   hash: true,
   plugins: [B$1, Ns, N2]
