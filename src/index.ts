@@ -15,6 +15,7 @@ import './theme/applier';
 import './theme/theme.scss';
 import './layouts/agenda.scss';
 import './layouts/side-by-side.scss';
+import './layouts/inline-code.scss';
 
 Reveal.initialize({
   hash: true,

@@ -76,6 +76,23 @@ This is a clear must do and it should not be open to debate.
 
 ---
 
+<!-- .element: class="inline-code" -->
+
+## Small code
+
+```typescript
+public handleUrlChange(url: string) {
+  const route = this.findRoute(this.routes, url) ?? this.getDefaultRoute();
+  if (route === this._currentRoute) {
+    return;
+  }
+  this._currentRoute = route;
+  this.updateShownPage(route);
+}
+```
+
+---
+
 ## Example -> Router
 
 ```typescript [2,8-13|15-22|16-17,22|29-35|40-42|44-51|53-61]
