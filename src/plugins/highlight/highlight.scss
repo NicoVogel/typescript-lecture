@@ -1,4 +1,13 @@
 
 .reveal .hljs.has-highlights tr:not(.highlight-line) {
-	color: inherit;
+  td:nth-child(2) {
+	  color: inherit;
+    span {
+      color: inherit;
+    }
+  }
+}
+
+.reveal .hljs-ln-numbers.hidden {
+  display: none;
 }

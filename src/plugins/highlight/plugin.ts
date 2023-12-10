@@ -135,21 +135,26 @@ async function createFrameCodeBlocks(block: HTMLElement) {
     return;
   }
 
-  if (highlightDefinition.offset) {
-    block.setAttribute(
-      'data-ln-start-from',
-      String(highlightDefinition.offset)
-    );
-  }
-
   // do not highlight the code if there is an error in the config
   hljs.highlightElement(block);
 
-  if (highlightDefinition.showLineNumbers) {
+  if (highlightDefinition.showLineNumber) {
+    if (highlightDefinition.offset) {
+      block.setAttribute(
+        'data-ln-start-from',
+        String(highlightDefinition.offset)
+      );
+    }
     block.setAttribute('data-show-line-numbers', 'true');
-    hljs.lineNumbersBlock(block, {singleLine: true});
-    await waitForTableInElement(block);
   }
+
+  // without this, the code is not in a table
+  hljs.lineNumbersBlock(block, {singleLine: true});
+  await waitForTableInElement(block);
+
+  block.querySelectorAll<HTMLElement>('.hljs-ln-numbers').forEach(element => {
+    element.classList.add('hidden');
+  });
 
   if (highlightDefinition.highlightSections.length === 0) {
     return;

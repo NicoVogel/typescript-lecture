@@ -1,8 +1,14 @@
 export type HighlightDefinition = {
-  showLineNumbers: boolean;
-  offset: number;
   highlightSections: HighlightSection[][];
-};
+} & (
+  | {
+      showLineNumber: false;
+    }
+  | {
+      offset: number;
+      showLineNumber: true;
+    }
+);
 
 export type HighlightSection =
   | {start: number}
@@ -51,17 +57,17 @@ export function deserializeHighlightDefinitions(
   highlightDefinition: string | null
 ): HighlightDefinition | string {
   if (highlightDefinition === null) {
-    return {offset: 0, showLineNumbers: false, highlightSections: []};
+    return {showLineNumber: false, highlightSections: []};
   }
   if (highlightDefinition === '') {
-    return {offset: 0, showLineNumbers: false, highlightSections: []};
+    return {showLineNumber: false, highlightSections: []};
   }
 
   const parsed = parseHighlightDefinition(highlightDefinition);
   if (typeof parsed === 'string') {
     return parsed;
   }
-  const {highlight, offset, showLineNumber} = parsed;
+  const {highlight, ...lineNumberConfig} = parsed;
 
   const highlightSections = highlight.split('|').map(frame => {
     return frame
@@ -89,22 +95,10 @@ export function deserializeHighlightDefinitions(
       .filter(Boolean);
   });
   return {
-    showLineNumbers: shouldShowLineNumbers(showLineNumber),
-    offset,
+    ...lineNumberConfig,
     highlightSections,
   };
 }
-
-function shouldShowLineNumbers(input?: string): boolean {
-  if (!input) {
-    return false;
-  }
-  if (input.trim() === '') {
-    return false;
-  }
-  return input.includes('N');
-}
-
 export function serializeHighlightSection(
   highlightSection: HighlightSection[]
 ): string {
@@ -129,57 +123,51 @@ export function serializeHighlightSection(
 
 function parseHighlightDefinition(input: string):
   | {
+      showLineNumber: false;
+      highlight: string;
+    }
+  | {
       offset: number;
-      showLineNumber: string | undefined;
+      showLineNumber: true;
       highlight: string;
     }
   | string {
   const parts = input.split(':');
-  if (parts.length > 3) {
-    return 'Invalid format if more than two colons';
+  if (parts.length > 2) {
+    return 'Invalid format if more than one colon';
   }
 
   if (parts.length === 1) {
     return {
       highlight: parts[0],
-      offset: 0,
-      showLineNumber: undefined,
+      showLineNumber: false,
     };
   }
 
-  const highlight = parts.pop()!;
-  const [first, second] = parts;
+  const [lineNumberConfig, highlight] = parts;
 
   const isNotNumber = (x: string | number) => isNaN(Number(x));
 
-  if (!second) {
-    if (isNotNumber(first)) {
+  if (isNotNumber(lineNumberConfig)) {
+    if (lineNumberConfig === 'N') {
       return {
         highlight,
         offset: 0,
-        showLineNumber: first,
+        showLineNumber: true,
       };
-    }
-    const offset = Number(first);
-    if (offset < 0) {
-      return 'Invalid offset value, it can not be lower than 0';
     }
     return {
       highlight,
-      offset,
-      showLineNumber: undefined,
+      showLineNumber: false,
     };
   }
-
-  const [offset, showLineNumber] = isNotNumber(first)
-    ? isNotNumber(second)
-      ? ['Invalid format as there is no number for offset', '']
-      : ([Number(second), first] as const)
-    : ([Number(first), second] as const);
-
-  if (typeof offset === 'string') {
-    return offset;
+  const offset = Number(lineNumberConfig);
+  if (offset < 0) {
+    return 'Invalid offset value, it can not be lower than 0';
   }
-
-  return {offset, showLineNumber, highlight};
+  return {
+    highlight,
+    offset,
+    showLineNumber: true,
+  };
 }
