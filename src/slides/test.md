@@ -80,7 +80,7 @@ This is a clear must do and it should not be open to debate.
 
 ## Small code
 
-```typescript
+```typescript [3:1-5]
 public handleUrlChange(url: string) {
   const route = this.findRoute(this.routes, url) ?? this.getDefaultRoute();
   if (route === this._currentRoute) {
