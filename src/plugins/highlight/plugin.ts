@@ -50,7 +50,7 @@ export class HighlightPlugin implements Plugin {
     // Run initial highlighting for all code
     if (config.highlightOnLoad) {
       for (const block of codeBlocks) {
-        await createFrameCodeBlocks(block);
+        await createFragmentCodeBlocks(block);
       }
     }
 
@@ -121,7 +121,7 @@ export class HighlightPlugin implements Plugin {
  * If the block contains multiple line highlight steps,
  * we clone the block and create a fragment for each step.
  */
-async function createFrameCodeBlocks(block: HTMLElement) {
+async function createFragmentCodeBlocks(block: HTMLElement) {
   if (block.innerHTML.trim().length === 0) {
     // nothing to do
     return;
@@ -130,12 +130,12 @@ async function createFrameCodeBlocks(block: HTMLElement) {
   const highlightDefinition = deserializeHighlightDefinitions(
     block.getAttribute('data-code-config')
   );
+  block.removeAttribute('data-code-config');
   if (typeof highlightDefinition === 'string') {
     console.error('Code block config error: ' + highlightDefinition, block);
     return;
   }
 
-  // do not highlight the code if there is an error in the config
   hljs.highlightElement(block);
 
   if (highlightDefinition.showLineNumber) {
@@ -148,102 +148,184 @@ async function createFrameCodeBlocks(block: HTMLElement) {
     block.setAttribute('data-show-line-numbers', 'true');
   }
 
-  // without this, the code is not in a table
+  // without this, the <code> does not contain a table with a row for each line
   hljs.lineNumbersBlock(block, {singleLine: true});
   await waitForTableInElement(block);
 
-  block.querySelectorAll<HTMLElement>('.hljs-ln-numbers').forEach(element => {
-    element.classList.add('hidden');
-  });
+  if (!highlightDefinition.showLineNumber) {
+    block.querySelectorAll<HTMLElement>('.hljs-ln-numbers').forEach(element => {
+      element.classList.add('hidden');
+    });
+  }
 
   if (highlightDefinition.highlightSections.length === 0) {
     return;
   }
 
-  if (highlightDefinition.highlightSections.length === 1) {
-    block.setAttribute(
-      'data-highlight-sections',
-      serializeHighlightSection(highlightDefinition.highlightSections[0])
-    );
-  }
-  // todo create may code blocks
-  if (highlightDefinition.highlightSections.length > 1) {
+  const scrollHandler = new ScrollHandler(block);
+  const fragmentHandler = new FragmentIndexHandler(block);
+  block.removeAttribute('data-fragment-index');
+
+  // create code blocks
+  highlightDefinition.highlightSections
+    .map((section, index) => {
+      if (index === 0) {
+        return [section, block] as const;
+      }
+      const fragmentBlock = block.cloneNode(true) as HTMLElement;
+      fragmentHandler.applyFrameIndex(fragmentBlock);
+      fragmentBlock.classList.add('fragment', 'fade-in-then-out');
+      block.parentNode?.appendChild(fragmentBlock);
+      return [section, fragmentBlock] as const;
+    })
+    // apply highlight
+    .forEach(([section, block]) => {
+      block.setAttribute(
+        'data-line-numbers',
+        serializeHighlightSection(section)
+      );
+      highlightLines(block, section);
+      block.addEventListener('visible', () =>
+        scrollHandler.scrollHighlightedLineIntoView(block)
+      );
+      block.addEventListener('hidden', () =>
+        scrollHandler.scrollHighlightedLineIntoView(block.previousSibling)
+      );
+    });
+
+  const slide = block.closest('section:not(.stack)');
+  if (!slide) {
     return;
   }
-
-  // const scrollState = {currentBlock: block};
-
-  // Scroll the first highlight into view when the slide
-  // becomes visible. Note supported in IE11 since it lacks
-  // support for Element.closest.
-  // const slide =
-  //   typeof block.closest === 'function'
-  //     ? block.closest('section:not(.stack)')
-  //     : null;
-  // if (slide) {
-  //   const scrollFirstHighlightIntoView = function () {
-  //     HighlightPlugin.scrollHighlightedLineIntoView(block, scrollState, true);
-  //     slide.removeEventListener('visible', scrollFirstHighlightIntoView);
-  //   };
-  //   slide.addEventListener('visible', scrollFirstHighlightIntoView);
-  // }
-
-  highlightLines(block, highlightDefinition.highlightSections[0]);
+  slide.setAttribute('data-fragment', '0');
+  slide.addEventListener(
+    'visible',
+    () => scrollHandler.scrollHighlightedLineIntoView(block, true),
+    {
+      once: true,
+    }
+  );
 }
 
-// function applyFrameIndex(
-//   block: HTMLElement,
-//   frameDefinitions: FrameDefinition[]
-// ) {
-//   // If the original code block has a fragment-index,
-//   // each clone should follow in an incremental sequence
-//   const index = block.getAttribute('data-fragment-index');
-//   const fragmentIndex =
-//     index !== null && !isNaN(parseInt(index, 10)) ? parseInt(index, 10) : null;
+class FragmentIndexHandler {
+  private readonly active;
+  private value;
+  constructor(block: HTMLElement) {
+    const original = block.getAttribute('data-fragment-index');
+    this.value = parseInt(original ?? '0', 10);
+    this.active = original !== null && !isNaN(this.value);
+  }
 
-//   // Generate fragments for all steps except the original block
-//   frameDefinitions.slice(1).forEach(function (highlight) {
-//     const fragmentBlock = block.cloneNode(true);
-//     fragmentBlock.setAttribute(
-//       'data-line-numbers',
-//       HighlightPlugin.serializeHighlightSteps([highlight])
-//     );
-//     fragmentBlock.classList.add('fragment');
-//     block.parentNode.appendChild(fragmentBlock);
-//     HighlightPlugin.highlightLines(fragmentBlock);
+  applyFrameIndex(block: HTMLElement) {
+    if (!this.active) return;
+    block.setAttribute('data-fragment-index', String(this.value));
+    this.value++;
+  }
+}
 
-//     if (typeof fragmentIndex === 'number') {
-//       fragmentBlock.setAttribute('data-fragment-index', fragmentIndex);
-//       fragmentIndex += 1;
-//     } else {
-//       fragmentBlock.removeAttribute('data-fragment-index');
-//     }
+export class ScrollHandler {
+  private scrollState;
 
-//     // Scroll highlights into view as we step through them
-//     fragmentBlock.addEventListener(
-//       'visible',
-//       HighlightPlugin.scrollHighlightedLineIntoView.bind(
-//         HighlightPlugin,
-//         fragmentBlock,
-//         scrollState
-//       )
-//     );
-//     fragmentBlock.addEventListener(
-//       'hidden',
-//       HighlightPlugin.scrollHighlightedLineIntoView.bind(
-//         HighlightPlugin,
-//         fragmentBlock.previousSibling,
-//         scrollState
-//       )
-//     );
-//   });
+  constructor(block: HTMLElement) {
+    this.scrollState = {currentBlock: block, animationFrameID: 0};
+  }
 
-//   block.removeAttribute('data-fragment-index');
-//   block.setAttribute(
-//     'data-line-numbers',
-//     HighlightPlugin.serializeHighlightSteps([frameDefinitions[0]])
-//   );
-// }
+  /**
+   * Animates scrolling to the first highlighted line
+   * in the given code block.
+   */
+  scrollHighlightedLineIntoView(
+    block: ChildNode | null,
+    skipAnimation?: boolean
+  ) {
+    if (!block || !(block instanceof HTMLElement)) return;
+    cancelAnimationFrame(this.scrollState.animationFrameID);
+
+    // Match the scroll position of the currently visible
+    // code block
+    if (this.scrollState.currentBlock) {
+      block.scrollTop = this.scrollState.currentBlock.scrollTop;
+    }
+
+    // Remember the current code block so that we can match
+    // its scroll position when showing/hiding fragments
+    this.scrollState.currentBlock = block;
+
+    const highlightBounds = this.getHighlightedLineBounds(block);
+    let viewportHeight = block.offsetHeight;
+
+    // Subtract padding from the viewport height
+    const blockStyles = getComputedStyle(block);
+    viewportHeight -=
+      parseInt(blockStyles.paddingTop) + parseInt(blockStyles.paddingBottom);
+
+    // Scroll position which centers all highlights
+    const startTop = block.scrollTop;
+    let targetTop =
+      highlightBounds.top +
+      (Math.min(highlightBounds.bottom - highlightBounds.top, viewportHeight) -
+        viewportHeight) /
+        2;
+
+    // Account for offsets in position applied to the
+    // <table> that holds our lines of code
+    const lineTable = block.querySelector<HTMLElement>('.hljs-ln');
+    if (lineTable)
+      targetTop += lineTable.offsetTop - parseInt(blockStyles.paddingTop);
+
+    // Make sure the scroll target is within bounds
+    targetTop = Math.max(
+      Math.min(targetTop, block.scrollHeight - viewportHeight),
+      0
+    );
+
+    if (skipAnimation === true || startTop === targetTop) {
+      block.scrollTop = targetTop;
+    } else {
+      // Don't attempt to scroll if there is no overflow
+      if (block.scrollHeight <= viewportHeight) return;
+
+      let time = 0;
+      const animate = () => {
+        time = Math.min(time + 0.02, 1);
+
+        // Update our eased scroll position
+        block.scrollTop =
+          startTop + (targetTop - startTop) * this.easeInOutQuart(time);
+
+        // Keep animating unless we've reached the end
+        if (time < 1) {
+          this.scrollState.animationFrameID = requestAnimationFrame(animate);
+        }
+      };
+
+      animate();
+    }
+  }
+
+  /**
+   * The easing function used when scrolling.
+   */
+  private easeInOutQuart(t: number) {
+    return t < 0.5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t;
+  }
+
+  private getHighlightedLineBounds(block: HTMLElement) {
+    const highlightedLines =
+      block.querySelectorAll<HTMLElement>('.highlight-line');
+    if (highlightedLines.length === 0) {
+      return {top: 0, bottom: 0};
+    } else {
+      const firstHighlight = highlightedLines[0];
+      const lastHighlight = highlightedLines[highlightedLines.length - 1];
+
+      return {
+        top: firstHighlight.offsetTop,
+        bottom: lastHighlight.offsetTop + lastHighlight.offsetHeight,
+      };
+    }
+  }
+}
 
 function waitForTableInElement(element: HTMLElement): Promise<void> {
   return new Promise(resolve => {

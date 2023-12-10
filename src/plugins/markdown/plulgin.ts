@@ -14,10 +14,6 @@ const DEFAULT_SLIDE_SEPARATOR = '\r?\n---\r?\n',
 
 const SCRIPT_END_PLACEHOLDER = '__SCRIPT_END__';
 
-// match an optional line number offset and highlight line numbers
-// [<line numbers>] or [<offset>: <line numbers>]
-const CODE_LINE_NUMBER_REGEX = /\[\s*((\d*):)?\s*([\s\d,|-]*)\]/;
-
 const HTML_ESCAPE_MAP = {
   '&': '&amp;',
   '<': '&lt;',
@@ -516,6 +512,7 @@ const Plugin = () => {
           code = escapeForHTML(code);
 
           return `<pre><code  data-code-config="${attribute}" class="${language}">${code}</code></pre>`;
+          // return `<pre><code  data-line-numbers="${attribute}" class="${language}">${code}</code></pre>`;
         };
       }
 
