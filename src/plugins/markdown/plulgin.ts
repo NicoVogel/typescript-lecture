@@ -512,7 +512,6 @@ const Plugin = () => {
           code = escapeForHTML(code);
 
           return `<pre><code  data-code-config="${attribute}" class="${language}">${code}</code></pre>`;
-          // return `<pre><code  data-line-numbers="${attribute}" class="${language}">${code}</code></pre>`;
         };
       }
 
