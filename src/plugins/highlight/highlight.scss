@@ -9,6 +9,12 @@
   }
 }
 
+.reveal .hljs.has-highlights td span.no-highlight {
+  color: inherit;
+  // in case of non highlighted lines, it gets the opacity of 0.4, so we have to multiply it by 0.7 to get the same opacity as the line numbers
+  opacity: calc(0.7 * 0.4);
+}
+
 .reveal .hljs-ln-numbers.hidden {
   display: none;
 }

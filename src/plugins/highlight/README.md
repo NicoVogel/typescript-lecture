@@ -11,6 +11,8 @@ Therefore I rewrote it in typescript and added the features that I needed.
 
 - highlight lines without showing line numbers
 - highlight only parts within one line (not yet implemented)
+  - todo: implement merge of many ranges within one line
+  - todo: implement split of existing span's to only highlight what is actually needed
 
 ## TODO: check if it can be contributed to the original
 
