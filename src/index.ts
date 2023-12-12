@@ -16,6 +16,7 @@ import './layouts/side-by-side.scss';
 import './layouts/inline-code.scss';
 
 import './features/theme-swap';
+import './features/highlight-editor';
 
 Reveal.initialize({
   hash: true,
