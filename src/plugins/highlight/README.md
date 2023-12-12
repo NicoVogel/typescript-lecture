@@ -10,9 +10,7 @@ Therefore I rewrote it in typescript and added the features that I needed.
 ## Added featuresThis is a copy of the original markdown plugin from reveal.js
 
 - highlight lines without showing line numbers
-- highlight only parts within one line (not yet implemented)
-  - todo: implement merge of many ranges within one line
-  - todo: implement split of existing span's to only highlight what is actually needed
+- highlight only parts within one line
 
 ## TODO: check if it can be contributed to the original
 
