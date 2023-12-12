@@ -155,13 +155,11 @@ const Plugin = () => {
       lastIndex = 0,
       isHorizontal,
       wasHorizontal = true,
-      content,
-      sectionStack = [];
+      content;
+    const sectionStack = [];
 
     // iterate until all blocks between separators are stacked up
     while ((matches = separatorRegex.exec(markdown))) {
-      const notes = null;
-
       // determine direction (horizontal by default)
       isHorizontal = horizontalSeparatorRegex.test(matches[0]);
 
@@ -234,12 +232,12 @@ const Plugin = () => {
             'section[data-markdown]:not([data-markdown-parsed])'
           )
         )
-        .forEach(function (section, i) {
+        .forEach(function (section) {
           if (section.getAttribute('data-markdown').length) {
             externalPromises.push(
               loadExternalMarkdown(section).then(
                 // Finished loading external file
-                function (xhr, url) {
+                function (xhr) {
                   section.outerHTML = slidify(xhr.responseText, {
                     separator: section.getAttribute('data-separator'),
                     verticalSeparator: section.getAttribute(
@@ -497,8 +495,9 @@ const Plugin = () => {
     init: function (reveal) {
       deck = reveal;
 
-      let {renderer, animateLists, ...markedOptions} =
-        deck.getConfig().markdown || {};
+      const options = deck.getConfig().markdown || {};
+      let {renderer} = options;
+      const {animateLists, ...markedOptions} = options;
 
       if (!renderer) {
         renderer = new marked.Renderer();
@@ -520,8 +519,8 @@ const Plugin = () => {
       }
 
       marked.setOptions({
-        renderer,
         ...markedOptions,
+        renderer,
       });
 
       return processSlides(deck.getRevealElement()).then(convertSlides);

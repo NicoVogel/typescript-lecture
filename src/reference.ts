@@ -5,11 +5,11 @@ import agenda from './slides/agenda.md';
 import example from './slides/example.md';
 import sideBySide from './slides/side-by-side.md';
 
-// addMarkdownSlides(agenda);
-// addMarkdownSlides(sideBySide);
-// addMarkdownSlides(example);
-// addMarkdownSlides(intro);
-// addMarkdownSlides(overview);
+addMarkdownSlides(agenda);
+addMarkdownSlides(sideBySide);
+addMarkdownSlides(example);
+addMarkdownSlides(intro);
+addMarkdownSlides(overview);
 addMarkdownSlides(test);
 
 function addMarkdownSlides(path: string): void {
