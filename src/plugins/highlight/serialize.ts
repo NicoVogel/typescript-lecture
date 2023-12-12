@@ -13,53 +13,49 @@ export type HighlightDefinition = {
 export type HighlightSection =
   | {start: number}
   | {start: number; end: number}
-  | {start: number; column: {from: number; to: number}};
+  | {start: number; columns: {from: number; to: number}[]};
 
 /**
- * Parses and formats a user-defined string of line
- * numbers to highlight.
+ * Deserializes a highlight definition string into an object structure.
+ * This function parses a given highlight definition string and converts it
+ * into an object that represents the various highlighting sections.
+ *
+ * The function supports different formats:
+ * - Single line highlighting (e.g., "6")
+ * - Range line highlighting (e.g., "6-8")
+ * - Column highlighting within a line (e.g., "6(7-15)")
+ * - Multiple column highlights within the same line (e.g., "6(7-15,23-28)")
+ * - Single character column highlighting (e.g., "6(7)")
  *
  * @example
- * deserializeHighlightSteps( '1,2|3,5-10|6(1)|6(5-10)' )
- * // {
- * // showLineNumbers: true,
- * // highlightSection:[
- * //   [ { start: 1 }, { start: 2 } ],
- * //   [ { start: 3 }, { start: 5, end: 10 } ],
- * //   [ { start: 6, column: {from: 1, to: 1} } ],
- * //   [ { start: 6, column: {from: 5, to: 10} } ],
- * // ]}
+ * // Single line highlighting
+ * deserializeHighlightDefinitions("6");
+ * // Output: { showLineNumber: false, highlightSections: [[{ start: 6 }]] }
+ *
  * @example
- * deserializeHighlightSteps( 'X1,2|3,5-10|6(1)|6(5-10)' )
- * // {
- * // showLineNumbers: false,
- * // highlightSection:[
- * //   [ { start: 1 }, { start: 2 } ],
- * //   [ { start: 3 }, { start: 5, end: 10 } ],
- * //   [ { start: 6, column: {from: 1, to: 1} } ],
- * //   [ { start: 6, column: {from: 5, to: 10} } ],
- * // ]}
+ * // Range line highlighting
+ * deserializeHighlightDefinitions("6-8");
+ * // Output: { showLineNumber: false, highlightSections: [[{ start: 6, end: 8 }]] }
+ *
  * @example
- * deserializeHighlightSteps( '' )
- * // {
- * // showLineNumbers: false,
- * // highlightSection:[
- * // ]}
+ * // Column highlighting within a line
+ * deserializeHighlightDefinitions("6(7-15)");
+ * // Output: { showLineNumber: false, highlightSections: [[{ start: 6, column: [{ from: 7, to: 15 }] }]] }
+ *
  * @example
- * deserializeHighlightSteps( '25:' )
- * // {
- * // showLineNumbers: true,
- * // offset: 25
- * // highlightSection:[
- * // ]}
+ * // Multiple column highlights within the same line
+ * deserializeHighlightDefinitions("6(7-15,23-28)");
+ * // Output: { showLineNumber: false, highlightSections: [[{ start: 6, column: [{ from: 7, to: 15 }, { from: 23, to: 28 }] }]] }
+ *
+ * @example
+ * // Single character column highlighting
+ * deserializeHighlightDefinitions("6(7)");
+ * // Output: { showLineNumber: false, highlightSections: [[{ start: 6, column: [{ from: 7, to: 8 }] }]] }
  */
 export function deserializeHighlightDefinitions(
   highlightDefinition: string | null
 ): HighlightDefinition | string {
-  if (highlightDefinition === null) {
-    return {showLineNumber: false, highlightSections: []};
-  }
-  if (highlightDefinition === '') {
+  if (highlightDefinition === null || highlightDefinition === '') {
     return {showLineNumber: false, highlightSections: []};
   }
 
@@ -70,46 +66,71 @@ export function deserializeHighlightDefinitions(
   const {highlight, ...lineNumberConfig} = parsed;
 
   const highlightSections = highlight.split('|').map(frame => {
-    return frame
-      .split(',')
-      .map<HighlightSection | null>(section => {
-        const match = section.match(
-          /^(\d+)(?:-(\d+))?(?:\((\d+)(?:-(\d+))?\))?$/
-        );
-        if (!match) return null;
+    const sections: (HighlightSection | null)[] = [];
+    let buffer = '';
+    let inParentheses = false;
 
-        const start = parseInt(match[1]);
-        const end = match[2] ? parseInt(match[2]) : undefined;
-        const colFrom = match[3] ? parseInt(match[3]) : undefined;
-        const colTo = match[4] ? parseInt(match[4]) : colFrom;
+    for (const char of frame) {
+      if (char === '(') inParentheses = true;
+      if (char === ')') inParentheses = false;
 
-        if (isNaN(start)) return null;
-        if (colFrom !== undefined && colTo !== undefined) {
-          return {start, column: {from: colFrom, to: colTo}};
-        } else if (end !== undefined) {
-          return {start, end};
-        } else {
-          return {start};
-        }
-      })
-      .filter(Boolean);
+      if (char === ',' && !inParentheses) {
+        if (buffer) sections.push(parseSection(buffer));
+        buffer = '';
+      } else {
+        buffer += char;
+      }
+    }
+
+    if (buffer) sections.push(parseSection(buffer));
+    return sections.filter(Boolean);
   });
+
   return {
     ...lineNumberConfig,
     highlightSections,
   };
 }
+
+function parseSection(sectionStr: string): HighlightSection | null {
+  const match = sectionStr.match(
+    /^(\d+)(?:-(\d+))?(?:\(([\d,-]+)\))?$/ // Regex to parse each section
+  );
+  if (!match) return null;
+
+  const start = parseInt(match[1]);
+  const end = match[2] ? parseInt(match[2]) : undefined;
+  const columnPart = match[3];
+
+  if (isNaN(start)) return null;
+
+  if (columnPart) {
+    const columns = columnPart.split(',').map(col => {
+      const [fromStr, toStr] = col.split('-');
+      const from = parseInt(fromStr);
+      const to = toStr ? parseInt(toStr) : from + 1;
+      return {from, to};
+    });
+    return {start, columns};
+  } else if (end !== undefined) {
+    return {start, end};
+  } else {
+    return {start};
+  }
+}
+
 export function serializeHighlightSection(
   highlightSection: HighlightSection[]
 ): string {
   return highlightSection
     .map(section => {
-      if ('column' in section) {
-        const columnPart =
-          section.column.from === section.column.to
-            ? `(${section.column.from})`
-            : `(${section.column.from}-${section.column.to})`;
-        return `${section.start}${columnPart}`;
+      if ('columns' in section) {
+        const columnPart = section.columns
+          .map(col =>
+            col.from === col.to ? `${col.from}` : `${col.from}-${col.to}`
+          )
+          .join(',');
+        return `${section.start}(${columnPart})`;
       }
 
       if ('end' in section) {

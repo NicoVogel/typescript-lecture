@@ -20,7 +20,6 @@ export function highlightLines(
       if ('end' in highlight) {
         return {
           type: 'range',
-          config: highlight,
           elements: Array.from(
             block.querySelectorAll(
               `table tr:nth-child(n+${highlight.start}):nth-child(-n+${highlight.end})`
@@ -30,18 +29,17 @@ export function highlightLines(
       }
 
       const tr = block.querySelector(`table tr:nth-child(${highlight.start})`);
-      if ('column' in highlight) {
+      if ('columns' in highlight) {
         const td = tr?.querySelector<HTMLElement>(`td:nth-child(2)`);
         return {
           type: 'column',
-          config: highlight,
+          ranges: highlight.columns,
           elements: td ? [tr!, td] : [],
         } as const;
       }
 
       return {
         type: 'line',
-        config: highlight,
         elements: [tr].filter(Boolean),
       } as const;
     })
@@ -54,14 +52,10 @@ export function highlightLines(
     }
     const [tr, td] = x.elements;
     tr.classList.add('highlight-line');
-    const codeSegments = findAllElements(td);
-    const newTd = highlightOnlyRange(td, codeSegments, [x.config.column]);
-    console.log(newTd);
+    const info = getColumnCharInfo(td, x.ranges);
+    const grouped = groupColumnCharInfo(info);
+    const newTd = createTdFromGroupedCharInfo(td, grouped);
     td.replaceWith(newTd);
-    // const outsideRange = findElementsOutsideRanges(element, [x.config.column]);
-    // transformCode(td, [x.config.column]);
-
-    // console.log(findElementsOutsideRanges(tr, [x.config.column]));
   });
 
   if (elementsToHighlight.length > 0) {
@@ -69,51 +63,131 @@ export function highlightLines(
   }
 }
 type Range = {from: number; to: number};
-type CodeSegment = {start: number; end: number; element: Element | Text};
 
-function findAllElements(tdElement: Element): CodeSegment[] {
-  let currentIndex = 0;
-  const results: CodeSegment[] = [];
+type ColumnCharInfo = {
+  char: string;
+  isHighlighted: boolean;
+  originalClasses: string[];
+};
 
-  tdElement.childNodes.forEach(node => {
-    const nodeLength = node.textContent!.length;
-    const result: CodeSegment = {
-      start: currentIndex,
-      end: currentIndex + nodeLength,
-      element:
-        node.nodeType === Node.TEXT_NODE ? (node as Text) : (node as Element),
-    };
+type GroupedCharInfo = {
+  isHighlighted: boolean;
+  text: string;
+  originalClasses?: string[];
+};
 
-    results.push(result);
-    currentIndex += nodeLength;
-  });
-
-  return results;
-}
-
-function highlightOnlyRange(
+function getColumnCharInfo(
   td: Element,
-  segments: CodeSegment[],
-  ranges: Range[]
-): HTMLTableCellElement {
-  const newTd = td.cloneNode(false) as HTMLTableCellElement;
+  highlightRanges: Range[]
+): ColumnCharInfo[] {
+  const charInfo: ColumnCharInfo[] = [];
+  let currentColumnIndex = 0;
 
-  // Helper function to check if a segment is within any of the ranges
-  const isInAnyRange = (segment: CodeSegment) => {
-    return ranges.some(
-      range => segment.start < range.to && segment.end > range.from
-    );
+  const isHighlighted = (index: number): boolean =>
+    highlightRanges.some(range => index >= range.from && index < range.to);
+
+  const processNode = (node: Node, classes: string[]) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const text = node.textContent || '';
+      for (const char of text) {
+        charInfo.push({
+          char: char,
+          isHighlighted: isHighlighted(currentColumnIndex),
+          originalClasses: classes,
+        });
+        currentColumnIndex++;
+      }
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      const element = node as HTMLElement;
+      const childClasses = [...element.classList];
+      node.childNodes.forEach(childNode =>
+        processNode(childNode, childClasses)
+      );
+    }
   };
 
-  segments.forEach(segment => {
-    if (isInAnyRange(segment)) {
-      // If the segment is within any range, append it as is
-      newTd.appendChild(segment.element.cloneNode(true));
+  td.childNodes.forEach(node => processNode(node, []));
+
+  return charInfo;
+}
+
+function groupColumnCharInfo(charInfo: ColumnCharInfo[]): GroupedCharInfo[] {
+  const grouped: GroupedCharInfo[] = [];
+  let currentGroup: GroupedCharInfo | null = null;
+
+  for (const info of charInfo) {
+    if (currentGroup && currentGroup.isHighlighted === info.isHighlighted) {
+      if (info.isHighlighted) {
+        // Further group by originalClasses for highlighted chars
+        if (arraysEqual(currentGroup.originalClasses, info.originalClasses)) {
+          currentGroup.text += info.char;
+        } else {
+          grouped.push(currentGroup);
+          currentGroup = {...info, text: info.char};
+        }
+      } else {
+        // Continue grouping non-highlighted chars
+        currentGroup.text += info.char;
+      }
     } else {
-      // If the segment is outside the ranges, wrap it in a no-highlight span
+      // Start a new group
+      if (currentGroup) {
+        grouped.push(currentGroup);
+      }
+      currentGroup = {
+        isHighlighted: info.isHighlighted,
+        text: info.char,
+        originalClasses: info.isHighlighted ? info.originalClasses : undefined,
+      };
+    }
+  }
+
+  // Push the last group
+  if (currentGroup) {
+    grouped.push(currentGroup);
+  }
+
+  return grouped;
+}
+
+// Helper function to compare two arrays
+function arraysEqual(
+  a: string[] | undefined,
+  b: string[] | undefined
+): boolean {
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  if (a.length !== b.length) return false;
+
+  for (let i = 0; i < a.length; ++i) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+}
+
+function createTdFromGroupedCharInfo(
+  originalTd: Element,
+  groupedCharInfo: GroupedCharInfo[]
+): HTMLTableCellElement {
+  const newTd = originalTd.cloneNode(false) as HTMLTableCellElement;
+
+  groupedCharInfo.forEach(group => {
+    if (group.isHighlighted) {
+      if (group.originalClasses && group.originalClasses.length > 0) {
+        // Create a span with the original classes
+        const span = document.createElement('span');
+        span.className = group.originalClasses.join(' ');
+        span.textContent = group.text;
+        newTd.appendChild(span);
+      } else {
+        // Append the text directly if no original classes are present
+        newTd.appendChild(document.createTextNode(group.text));
+      }
+    } else {
+      // Create a span with the 'no-highlight' class for non-highlighted text
       const span = document.createElement('span');
       span.className = 'no-highlight';
-      span.appendChild(segment.element.cloneNode(true));
+      span.textContent = group.text;
       newTd.appendChild(span);
     }
   });
