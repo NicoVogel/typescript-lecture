@@ -10,11 +10,12 @@ import 'reveal.js/dist/reset.css';
 import 'reveal.js/dist/reveal.css';
 
 import './reference';
-import './theme/applier';
 import './theme/theme.scss';
 import './layouts/agenda.scss';
 import './layouts/side-by-side.scss';
 import './layouts/inline-code.scss';
+
+import './features/theme-swap';
 
 Reveal.initialize({
   hash: true,

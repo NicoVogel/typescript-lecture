@@ -2,9 +2,6 @@
 import lightThemeUrl from 'highlight.js/styles/github.css?url';
 import darkThemeUrl from 'highlight.js/styles/github-dark.css?url';
 
-// web component to toggle the theme
-import './theme-toggle';
-
 function loadStyleSheet(url: string): void {
   const existingLink = document.querySelector('link[data-theme="highlightjs"]');
   if (existingLink) {
