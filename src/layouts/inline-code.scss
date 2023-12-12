@@ -1,0 +1,9 @@
+.reveal .inline-code {
+  pre {
+    box-shadow: none;
+
+    code.hljs {
+      background-color: inherit;
+    }
+  }
+}

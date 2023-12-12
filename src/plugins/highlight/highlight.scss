@@ -1,0 +1,31 @@
+.reveal .hljs.has-highlights tr:not(.highlight-line) {
+  td:nth-child(2) {
+    color: inherit;
+    opacity: 0.7;
+    span {
+      color: inherit;
+      opacity: 0.7;
+    }
+  }
+}
+
+.reveal .hljs.has-highlights td span.no-highlight {
+  color: inherit;
+  // in case of non highlighted lines, it gets the opacity of 0.4, so we have to multiply it by 0.7 to get the same opacity as the line numbers
+  opacity: calc(0.7 * 0.4);
+}
+
+.reveal .hljs-ln-numbers.hidden {
+  display: none;
+}
+
+.reveal section code:not(.fragment) {
+  transition: all 0.2s ease;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.reveal section[data-fragment='-1'] code:not(.fragment) {
+  opacity: 1;
+  visibility: inherit;
+}
