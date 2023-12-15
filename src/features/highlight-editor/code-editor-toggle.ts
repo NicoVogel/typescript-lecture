@@ -1,9 +1,18 @@
 import {LitElement, html, css} from 'lit';
 import {customElement, state} from 'lit/decorators.js';
 
+export type CodeEditorToggleEvent =
+  | {
+      active: true;
+      code: string;
+    }
+  | {
+      active: false;
+    };
+
 declare global {
   interface HTMLElementEventMap {
-    'code-edit-active': CustomEvent<boolean>;
+    'code-edit-active': CustomEvent<CodeEditorToggleEvent>;
   }
 }
 
@@ -22,36 +31,36 @@ export class CodeEditorToggle extends LitElement {
 
   toggleEmitter() {
     this.isActive = !this.isActive;
+    if (!this.isActive) {
+      this.dispatchEvent(
+        new CustomEvent<CodeEditorToggleEvent>('code-edit-active', {
+          detail: {
+            active: false,
+          },
+          bubbles: true,
+          composed: true,
+        })
+      );
+    }
 
     const currentVisibleCode = this.getCurrentVisibleCode();
 
     if (!currentVisibleCode) {
       return;
     }
+
+    const code = currentVisibleCode.innerText;
     if (this.isActive) {
-      const wrapper = document.createElement('code-selection-emitter');
-      currentVisibleCode.parentNode?.insertBefore(wrapper, currentVisibleCode);
-      wrapper.appendChild(currentVisibleCode);
       this.dispatchEvent(
-        new CustomEvent<boolean>('code-edit-active', {
-          detail: true,
+        new CustomEvent<CodeEditorToggleEvent>('code-edit-active', {
+          detail: {
+            active: true,
+            code,
+          },
           bubbles: true,
           composed: true,
         })
       );
-    } else {
-      const wrapper = currentVisibleCode.parentElement;
-      if (wrapper && wrapper.tagName === 'CODE-SELECTION-EMITTER') {
-        wrapper.parentNode?.insertBefore(currentVisibleCode, wrapper);
-        wrapper.parentNode?.removeChild(wrapper);
-        this.dispatchEvent(
-          new CustomEvent<boolean>('code-edit-active', {
-            detail: false,
-            bubbles: true,
-            composed: true,
-          })
-        );
-      }
     }
   }
 

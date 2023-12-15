@@ -7,7 +7,7 @@ import {
   nothing,
 } from 'lit';
 import {customElement, state} from 'lit/decorators.js';
-import type {SelectionDetail} from './code-selection-emitter';
+import type {SelectionDetail} from './code-editor-wrapper';
 
 export type ListEntry =
   | {start: number}
@@ -27,16 +27,21 @@ export class CodeSelectionManager extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this.addEventListener('code-selection', this.handleCodeSelection);
+    document.body.addEventListener('code-selection', x =>
+      this.handleCodeSelection(x)
+    );
   }
 
   disconnectedCallback(): void {
     super.disconnectedCallback();
-    this.removeEventListener('code-selection', this.handleCodeSelection);
+    document.body.removeEventListener('code-selection', x =>
+      this.handleCodeSelection(x)
+    );
   }
 
   handleCodeSelection(event: CustomEvent<SelectionDetail>): void {
     this.latestSelection = parseSelection(event.detail);
+    // this.requestUpdate('latestSelection');
   }
 
   addSelectionToList(): void {
@@ -70,7 +75,11 @@ export class CodeSelectionManager extends LitElement {
   render(): TemplateResult {
     return html`
       <div>
-        <span>${this.latestSelection}</span>
+        <span>
+          ${this.latestSelection
+            ? convertListEntryToHighlightSelectionText(this.latestSelection)
+            : 'Nothing selected yet'}</span
+        >
         ${this.latestSelection
           ? html`<button @click="${this.addSelectionToList}">
               Add to List
@@ -91,7 +100,6 @@ export class CodeSelectionManager extends LitElement {
                   : nothing}
                 ${convertListEntryToHighlightSelectionText(selection)}
               </div>
-              ${selection}
               <button @click="${() => this.deleteSelection(index)}">
                 Delete
               </button>
