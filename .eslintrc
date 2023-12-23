@@ -1,5 +1,9 @@
 {
-  "extends": ["plugin:prettier/recommended", "eslint:recommended"],
+  "extends": [
+    "plugin:prettier/recommended",
+    "eslint:recommended",
+    "./src/features/typesafe-events/.eslintrc"
+  ],
   "parserOptions": {
     "ecmaVersion": 2020,
     "sourceType": "module"
@@ -11,7 +15,10 @@
       "extends": [
         "plugin:@typescript-eslint/recommended",
         "plugin:lit/recommended"
-      ]
+      ],
+      "rules": {
+        "no-case-declarations": "off"
+      }
     },
     {
       "files": ["*.mjs"],
