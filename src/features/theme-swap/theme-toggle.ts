@@ -19,13 +19,13 @@ export class ThemeToggleSlider extends LitElement {
     return css`
       .theme-toggle {
         position: fixed;
-        top: 10px;
-        right: 10px;
-        width: 50px;
-        height: 24px;
+        top: 1rem;
+        right: 1rem;
+        width: 3rem;
+        height: 1.5rem;
         background-color: var(--r-theme-light-shades);
         border: 1px solid var(--r-theme-main-brand-color);
-        border-radius: 12px;
+        border-radius: 1.5rem;
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -34,8 +34,8 @@ export class ThemeToggleSlider extends LitElement {
         z-index: 1000;
       }
       .theme-toggle-icon {
-        width: 24px;
-        height: 24px;
+        width: 1.5rem;
+        height: 1.5rem;
         border-radius: 50%;
         background-color: var(--r-theme-main-brand-color);
         color: var(--r-theme-light-shades);
@@ -77,7 +77,12 @@ export class ThemeToggleSlider extends LitElement {
         class="theme-toggle ${this.isDarkMode ? 'dark' : ''}"
         @click="${this.toggleTheme}"
       >
-        <div class="theme-toggle-icon">${this.isDarkMode ? '🌙' : '☀'}</div>
+        <div class="theme-toggle-icon">
+          <reveal-icon
+            icon="${this.isDarkMode ? 'moon' : 'sun'}"
+            size="small"
+          ></reveal-icon>
+        </div>
       </div>
     `;
   }
