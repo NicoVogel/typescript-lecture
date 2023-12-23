@@ -6,6 +6,21 @@
   "image": "mcr.microsoft.com/devcontainers/base:jammy",
   "features": {
     "ghcr.io/shyim/devcontainers-features/bun:0": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "usernamehw.errorlens",
+        "yoavbls.pretty-ts-errors",
+        "streetsidesoftware.code-spell-checker",
+        "eamodio.gitlens",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "yzhang.markdown-all-in-one",
+        "EditorConfig.EditorConfig",
+        "runem.lit-plugin"
+      ]
+    }
   }
 
   // Features to add to the dev container. More info: https://containers.dev/features.

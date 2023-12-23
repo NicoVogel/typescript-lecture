@@ -1,0 +1,38 @@
+# This workflow runs lint, build, test, and icon type check of the mono repo
+name: Quality Gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/features/icon/**'
+
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  icon-types-check:
+    name: Icon Types Check 🖼️
+    runs-on: ubuntu-latest
+    container:
+      # in sync with devcontainer.json
+      image: mcr.microsoft.com/devcontainers/base:jammy
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Setup bun ⚙️
+        uses: oven-sh/setup-bun@v1
+
+      - name: Install 📦
+        run: |
+          bun install
+
+      - name: Check Icon Types 🖼️
+        run: |
+          bun run icon-type:check
