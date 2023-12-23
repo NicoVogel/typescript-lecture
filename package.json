@@ -12,7 +12,9 @@
     "lint:non-code": "prettier --check \"**/*.{json,yaml,yml,md}\"",
     "format:non-code": "prettier --write \"**/*.{json,yaml,yml,md}\"",
     "lint:code": "eslint --ext .ts,.js .",
-    "format:code": "eslint --ext .ts,.js . --fix"
+    "format:code": "eslint --ext .ts,.js . --fix",
+    "icon-type:generate": "node ./src/features/icon/tools/update-icon-type.mjs src/features/icon/assets src/features/icon/icon-types.d.ts generate",
+    "icon-type:check": "node ./src/features/icon/tools/update-icon-type.mjs src/features/icon/assets src/features/icon/icon-types.d.ts check"
   },
   "keywords": [],
   "author": "",
