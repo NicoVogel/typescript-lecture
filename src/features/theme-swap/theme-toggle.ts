@@ -1,9 +1,10 @@
 import {LitElement, html, css} from 'lit';
 import {customElement, state} from 'lit/decorators.js';
+import {GetEvent} from '../typesafe-events';
 
 @customElement('theme-toggle-slider')
 export class ThemeToggleSlider extends LitElement {
-  @state() private isDarkMode: boolean;
+  @state() private isDarkMode = false;
 
   constructor() {
     super();
@@ -18,37 +19,10 @@ export class ThemeToggleSlider extends LitElement {
   static get styles() {
     return css`
       .theme-toggle {
+        z-index: 1000;
         position: fixed;
         top: 1rem;
         right: 1rem;
-        width: 3rem;
-        height: 1.5rem;
-        background-color: var(--r-theme-light-shades);
-        border: 1px solid var(--r-theme-main-brand-color);
-        border-radius: 1.5rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        transition: justify-content 0.3s ease;
-        z-index: 1000;
-      }
-      .theme-toggle-icon {
-        width: 1.5rem;
-        height: 1.5rem;
-        border-radius: 50%;
-        background-color: var(--r-theme-main-brand-color);
-        color: var(--r-theme-light-shades);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-        transition:
-          background-color 0.3s ease,
-          color 0.3s ease;
-      }
-      .theme-toggle.dark {
-        justify-content: flex-start;
       }
     `;
   }
@@ -65,25 +39,23 @@ export class ThemeToggleSlider extends LitElement {
     document.body.classList.toggle('dark', this.isDarkMode);
   }
 
-  private toggleTheme(): void {
-    this.isDarkMode = !this.isDarkMode;
+  private handleSlider(newState: boolean): void {
+    this.isDarkMode = newState;
     document.body.classList.toggle('dark', this.isDarkMode);
     localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
   }
 
   protected render() {
     return html`
-      <div
-        class="theme-toggle ${this.isDarkMode ? 'dark' : ''}"
-        @click="${this.toggleTheme}"
+      <comp-slider
+        @slider-change="${(e: GetEvent<'slider-change'>) =>
+          this.handleSlider(e.detail.active)}"
+        ?isActive="${this.isDarkMode}"
+        class="theme-toggle"
       >
-        <div class="theme-toggle-icon">
-          <reveal-icon
-            icon="${this.isDarkMode ? 'moon' : 'sun'}"
-            size="small"
-          ></reveal-icon>
-        </div>
-      </div>
+        <reveal-icon slot="disabled" icon="sun" size="small"></reveal-icon>
+        <reveal-icon slot="enabled" icon="moon" size="small"></reveal-icon>
+      </comp-slider>
     `;
   }
 }

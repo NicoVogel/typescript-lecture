@@ -12,3 +12,6 @@ export function createEvent<T extends keyof HTMLElementEventMap>(
     composed: true,
   });
 }
+
+export type GetEvent<T extends keyof HTMLElementEventMap> =
+  HTMLElementEventMap[T];
