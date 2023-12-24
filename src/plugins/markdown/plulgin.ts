@@ -79,7 +79,7 @@ const Plugin = () => {
         value = attributes[i].value;
 
       // disregard attributes that are used for markdown loading/parsing
-      if (/data\-(markdown|separator|vertical|notes)/gi.test(name)) continue;
+      if (/data-(markdown|separator|vertical|notes)/gi.test(name)) continue;
 
       if (value) {
         result.push(name + '="' + value + '"');
