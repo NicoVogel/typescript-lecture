@@ -15,32 +15,35 @@ $textLineHeight: 1.3em;
 $heading1Size: 2.5em;
 $heading2Size: 1.6em;
 $heading3Size: 1.3em;
-$heading4Size: 1.0em;
+$heading4Size: 1em;
 $headingWeight: 600;
 $headingLineHeight: 1.2em;
 
 // Adjust these color variables to your preferred values
 $light-shades: $zinc-50;
-$light-accent: #AFAAC6;
-$main-brand-color: #917C9C;
-$dark-accent: #9DA8AE;
-$dark-shades: #383B4B;
+$light-accent: #afaac6;
+$main-brand-color: #917c9c;
+$dark-accent: #9da8ae;
+$dark-shades: #383b4b;
+$danger: #f44336;
 
 // Light Theme Variables
 :root {
-    --r-theme-light-shades: #{$light-shades};
-    --r-theme-light-accent: #{$light-accent};
-    --r-theme-main-brand-color: #{$main-brand-color};
-    --r-theme-dark-accent: #{$dark-accent};
-    --r-theme-dark-shades: #{$dark-shades};
+  --r-theme-light-shades: #{$light-shades};
+  --r-theme-light-accent: #{$light-accent};
+  --r-theme-main-brand-color: #{$main-brand-color};
+  --r-theme-dark-accent: #{$dark-accent};
+  --r-theme-dark-shades: #{$dark-shades};
+  --r-theme-danger: #{$danger};
 }
 
 // Dark Theme Variables
 .dark {
-    // These colors can be adjusted to fit the dark theme aesthetics
-    --r-theme-light-shades: #{$dark-shades};
-    --r-theme-light-accent: #{$dark-accent};
-    --r-theme-main-brand-color: #{$main-brand-color};
-    --r-theme-dark-accent: #{$light-accent};
-    --r-theme-dark-shades: #{$light-shades};
+  // These colors can be adjusted to fit the dark theme aesthetics
+  --r-theme-light-shades: #{$dark-shades};
+  --r-theme-light-accent: #{$dark-accent};
+  --r-theme-main-brand-color: #{$main-brand-color};
+  --r-theme-dark-accent: #{$light-accent};
+  --r-theme-dark-shades: #{$light-shades};
+  --r-theme-danger: #{$danger};
 }

@@ -2,6 +2,7 @@ import {LitElement, html, css} from 'lit';
 import {customElement, query, state} from 'lit/decorators.js';
 import {createFragmentCodeBlocks} from '../../plugins/highlight/plugin';
 import lightThemeUrl from 'highlight.js/styles/github.css?url';
+import {createEvent} from '../typesafe-events';
 
 export type SelectionPosition = {
   row: number;
@@ -23,9 +24,13 @@ declare global {
 export class CodeEditorWrapper extends LitElement {
   static get styles() {
     return css`
-      :host([code-edit-active]) {
+      :host([editing-code]) {
         display: flex;
         flex-direction: column;
+      }
+
+      code {
+        max-height: 60rem;
       }
     `;
   }
@@ -38,16 +43,29 @@ export class CodeEditorWrapper extends LitElement {
   constructor() {
     super();
     this.presentation = document.querySelector('.reveal')!;
-    document.body.addEventListener('code-edit-active', event => {
-      this.isCodeEditActive = event.detail.active;
-      if (event.detail.active) {
-        this.code = event.detail.code;
-      }
-      this.toggleAttribute('code-edit-active', this.isCodeEditActive);
-      this.presentation.style.display = this.isCodeEditActive
-        ? 'none'
-        : 'block';
+    console.assert(this.presentation, 'Reveal.js not found');
+
+    this.presentation.addEventListener('ready', () => {
+      console.log('reveal.js ready');
+      this.wrapCodeBlocks();
     });
+
+    this.addEventListener('code-edit', event => {
+      this.code = event.detail.code;
+      this.showEditor();
+    });
+  }
+
+  private showPresentation() {
+    this.isCodeEditActive = false;
+    this.toggleAttribute('editing-code', false);
+    this.presentation.style.display = 'block';
+  }
+
+  private showEditor() {
+    this.isCodeEditActive = true;
+    this.toggleAttribute('editing-code', true);
+    this.presentation.style.display = 'none';
   }
 
   protected updated(
@@ -70,10 +88,21 @@ export class CodeEditorWrapper extends LitElement {
         href="${lightThemeUrl}"
         data-theme="highlightjs"
       />
+      <button @click="${() => this.showPresentation()}">Exit</button>
       <code-selection-manager></code-selection-manager>
       <pre>
           <code class="typescript hljs language-typescript">${this.code}</code>
           </pre> `;
+  }
+
+  private wrapCodeBlocks() {
+    const codeBlocks = this.presentation.querySelectorAll('pre');
+
+    codeBlocks.forEach(code => {
+      const wrapper = document.createElement('code-edit-button');
+      code.parentNode!.insertBefore(wrapper, code);
+      wrapper.appendChild(code);
+    });
   }
 
   private handleSelectionChange(): void {
@@ -105,12 +134,9 @@ export class CodeEditorWrapper extends LitElement {
       return;
     }
 
-    const event = new CustomEvent('code-selection', {
-      detail: {startPosition, endPosition},
-      bubbles: true,
-      composed: true,
-    });
-    this.dispatchEvent(event);
+    this.dispatchEvent(
+      createEvent('code-selection', {startPosition, endPosition})
+    );
   }
 
   private calculatePosition(

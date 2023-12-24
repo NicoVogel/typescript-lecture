@@ -29,7 +29,91 @@ export class CodeSelectionManager extends LitElement {
   @state() private latestSelection?: ListEntry;
 
   static get styles(): CSSResultGroup {
-    return css``;
+    return css`
+      pre {
+        margin: 0;
+      }
+
+      :host {
+        color: var(--r-theme-dark-shades);
+        background-color: var(--r-theme-dark-accent);
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      button {
+        background-color: var(--r-theme-main-brand-color);
+        color: var(--r-theme-light-shades);
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: var(--r-theme-dark-accent);
+      }
+
+      ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .entry {
+        display: flex;
+        align-items: center;
+      }
+
+      .list-item {
+        background-color: var(--r-theme-light-shades);
+        color: var(--r-theme-dark-shades);
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        padding-left: 1rem;
+        height: 2.5rem;
+        border-radius: 0.5rem;
+      }
+
+      .item-text {
+        flex-grow: 1;
+      }
+
+      .move-container {
+        background-color: var(--r-theme-main-brand-color);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: space-evenly;
+      }
+      .move-button {
+        display: flex;
+        padding: 0 0.25rem;
+        border: none;
+        font-size: 1rem;
+        flex-grow: 1;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .delete-button {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        background-color: var(--r-theme-danger);
+        border: none;
+        height: 100%;
+        font-size: 1rem;
+        padding: 0 1rem;
+        border-radius: 0 0.5rem 0.5rem 0;
+      }
+
+      .slider {
+        padding: 0 1rem;
+      }
+    `;
   }
 
   connectedCallback(): void {
@@ -64,15 +148,18 @@ export class CodeSelectionManager extends LitElement {
   private renderHeader() {
     return html` <div>
       <div>
-        ${getCombinedSelectionText(this.selections)}
-        <button @click="${this.copyToClipboard}">Copy to Clipboard</button>
+        <pre>${getCombinedSelectionText(this.selections)}</pre>
+        <button @click="${this.copyToClipboard}">
+          <reveal-icon icon="clipboard"></reveal-icon>
+        </button>
       </div>
       <div>
-        <span>
+        <pre>
           ${this.latestSelection
             ? convertListEntryToHighlightSelectionText(this.latestSelection)
             : 'Nothing selected yet'}
-        </span>
+        </pre
+        >
         ${this.latestSelection
           ? html`<button @click="${this.addSelectionToList}">
               Add to List
@@ -88,21 +175,36 @@ export class CodeSelectionManager extends LitElement {
       selection.type === 'separator'
         ? 'Separator'
         : convertListEntryToHighlightSelectionText(selection);
-    return html`<div>
+    return html`<li class="list-item">
+      <pre class="item-text">${text}</pre>
       ${selection.type === 'columns'
-        ? html` <input
-            type="checkbox"
-            .checked=${selection.fullLine}
-            @change=${() => this.toggleFullLine(index)}
-          />`
+        ? html` <comp-slider
+            class="slider"
+            ?isActive=${selection.fullLine}
+            @slider-change=${() => this.toggleFullLine(index)}
+          ></comp-slider>`
         : nothing}
-      ${text}
-      <button @click="${() => this.deleteSelection(index)}">Delete</button>
-      <button @click="${() => this.moveSelection(index, 'up')}">Move Up</button>
-      <button @click="${() => this.moveSelection(index, 'down')}">
-        Move Down
+      <div class="move-container">
+        <button
+          class="move-button"
+          @click="${() => this.moveSelection(index, 'up')}"
+        >
+          <reveal-icon icon="arrow-up" size="small"></reveal-icon>
+        </button>
+        <button
+          class="move-button"
+          @click="${() => this.moveSelection(index, 'down')}"
+        >
+          <reveal-icon icon="arrow-down" size="small"></reveal-icon>
+        </button>
+      </div>
+      <button
+        class="delete-button"
+        @click="${() => this.deleteSelection(index)}"
+      >
+        <reveal-icon icon="delete" size="small"></reveal-icon>
       </button>
-    </div>`;
+    </li>`;
   }
 
   private addSelectionToList(): void {
@@ -145,7 +247,7 @@ export class CodeSelectionManager extends LitElement {
     }
   }
 
-  copyToClipboard(): void {
+  private copyToClipboard(): void {
     const textToCopy = getCombinedSelectionText(this.selections);
     navigator.clipboard
       .writeText(textToCopy)
