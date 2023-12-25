@@ -35,6 +35,7 @@ export class CodeEditorWrapper extends LitElement {
     `;
   }
 
+  @state() private showDialog = false;
   @state() private isCodeEditActive = false;
   private code = '';
   @query('code') private codeElement?: HTMLElement;
@@ -56,18 +57,6 @@ export class CodeEditorWrapper extends LitElement {
     });
   }
 
-  private showPresentation() {
-    this.isCodeEditActive = false;
-    this.toggleAttribute('editing-code', false);
-    this.presentation.style.display = 'block';
-  }
-
-  private showEditor() {
-    this.isCodeEditActive = true;
-    this.toggleAttribute('editing-code', true);
-    this.presentation.style.display = 'none';
-  }
-
   protected updated(
     changedProperties: Map<string | number | symbol, unknown>
   ): void {
@@ -80,6 +69,15 @@ export class CodeEditorWrapper extends LitElement {
   }
 
   render() {
+    if (this.showDialog) {
+      return html`
+        <dialog open>
+          <p>Selection will not be stored. Do you really want to close it?</p>
+          <button @click="${() => this.handleDialogClose(true)}">Yes</button>
+          <button @click="${() => this.handleDialogClose(false)}">No</button>
+        </dialog>
+      `;
+    }
     if (!this.isCodeEditActive) {
       return html`<slot></slot>`;
     }
@@ -88,11 +86,24 @@ export class CodeEditorWrapper extends LitElement {
         href="${lightThemeUrl}"
         data-theme="highlightjs"
       />
-      <button @click="${() => this.showPresentation()}">Exit</button>
+      <button @click="${() => this.confirmClose()}">
+        <reveal-icon icon="x"></reveal-icon>
+      </button>
       <code-selection-manager></code-selection-manager>
       <pre>
           <code class="typescript hljs language-typescript">${this.code}</code>
           </pre> `;
+  }
+
+  private confirmClose() {
+    this.showDialog = true;
+  }
+
+  private handleDialogClose(confirmed: boolean) {
+    this.showDialog = false;
+    if (confirmed) {
+      this.showPresentation();
+    }
   }
 
   private wrapCodeBlocks() {
@@ -103,6 +114,18 @@ export class CodeEditorWrapper extends LitElement {
       code.parentNode!.insertBefore(wrapper, code);
       wrapper.appendChild(code);
     });
+  }
+
+  private showPresentation() {
+    this.isCodeEditActive = false;
+    this.toggleAttribute('editing-code', false);
+    this.presentation.style.display = 'block';
+  }
+
+  private showEditor() {
+    this.isCodeEditActive = true;
+    this.toggleAttribute('editing-code', true);
+    this.presentation.style.display = 'none';
   }
 
   private handleSelectionChange(): void {
