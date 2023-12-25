@@ -44,9 +44,9 @@ export class Selection {
     this.entry = details;
   }
 
-  toggleFillLine(): void {
+  changeFullLine(state: boolean): void {
     if (this.entry && 'columns' in this.entry) {
-      this.entry.fullLine = !this.entry.fullLine;
+      this.entry.fullLine = state;
     }
   }
 
@@ -134,12 +134,16 @@ export class Selection {
 export class Selections {
   private selections: Selection[] = [];
 
+  constructor(private onChange: () => void) {}
+
   addSelection(selection: Selection): void {
     this.selections = [...this.selections, selection];
+    this.onChange();
   }
 
   addSeparator(): void {
     this.selections = [...this.selections, new Selection()];
+    this.onChange();
   }
 
   deleteSelection(index: number): void {
@@ -147,6 +151,7 @@ export class Selections {
       ...this.selections.slice(0, index),
       ...this.selections.slice(index + 1),
     ];
+    this.onChange();
   }
 
   moveSelection(index: number, direction: 'up' | 'down'): void {
@@ -162,10 +167,12 @@ export class Selections {
       ];
       this.selections = newSelections;
     }
+    this.onChange();
   }
 
-  toggleFullLine(index: number): void {
-    this.selections[index].toggleFillLine();
+  changeFullLine(index: number, state: boolean): void {
+    this.selections[index].changeFullLine(state);
+    this.onChange();
   }
 
   [Symbol.iterator](): Iterator<Selection> {
