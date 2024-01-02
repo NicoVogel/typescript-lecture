@@ -7,6 +7,7 @@
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
     "yzhang.markdown-all-in-one",
-    "EditorConfig.EditorConfig"
+    "EditorConfig.EditorConfig",
+    "runem.lit-plugin"
   ]
 }

@@ -1,0 +1,16 @@
+{
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "rules": {
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "NewExpression[callee.name='CustomEvent']",
+            "message": "Use 'createEvent' function instead of 'new CustomEvent'."
+          }
+        ]
+      }
+    }
+  ]
+}

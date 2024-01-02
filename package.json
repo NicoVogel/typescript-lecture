@@ -12,7 +12,9 @@
     "lint:non-code": "prettier --check \"**/*.{json,yaml,yml,md}\"",
     "format:non-code": "prettier --write \"**/*.{json,yaml,yml,md}\"",
     "lint:code": "eslint --ext .ts,.js .",
-    "format:code": "eslint --ext .ts,.js . --fix"
+    "format:code": "eslint --ext .ts,.js . --fix",
+    "icon-type:generate": "node ./src/features/icon/tools/update-icon-type.mjs src/features/icon/assets src/features/icon/icon-types.d.ts generate",
+    "icon-type:check": "node ./src/features/icon/tools/update-icon-type.mjs src/features/icon/assets src/features/icon/icon-types.d.ts check"
   },
   "keywords": [],
   "author": "",
@@ -26,14 +28,18 @@
     "concurrently": "^8.2.2",
     "eslint": "^8.52.0",
     "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-lit": "^1.11.0",
     "eslint-plugin-prettier": "^5.0.1",
     "highlight.js": "^11.9.0",
     "http-server": "^14.1.1",
+    "lit": "^3.1.0",
     "marked": "^11.0.1",
     "prettier": "^3.0.3",
     "sass": "^1.69.5",
+    "ts-lit-plugin": "^2.0.1",
     "typescript": "^5.2.2",
-    "vite": "^4.5.0"
+    "vite": "^4.5.0",
+    "vite-plugin-checker": "^0.6.2"
   },
   "dependencies": {
     "geist": "^1.0.0",

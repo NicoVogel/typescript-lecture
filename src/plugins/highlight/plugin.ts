@@ -121,7 +121,7 @@ export class HighlightPlugin implements Plugin {
  * If the block contains multiple line highlight steps,
  * we clone the block and create a fragment for each step.
  */
-async function createFragmentCodeBlocks(block: HTMLElement) {
+export async function createFragmentCodeBlocks(block: HTMLElement) {
   if (block.innerHTML.trim().length === 0) {
     // nothing to do
     return;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /*!
  * The reveal.js markdown plugin. Handles parsing of
  * markdown inside of presentations as well as loading
@@ -79,7 +80,7 @@ const Plugin = () => {
         value = attributes[i].value;
 
       // disregard attributes that are used for markdown loading/parsing
-      if (/data\-(markdown|separator|vertical|notes)/gi.test(name)) continue;
+      if (/data-(markdown|separator|vertical|notes)/gi.test(name)) continue;
 
       if (value) {
         result.push(name + '="' + value + '"');
@@ -237,7 +238,7 @@ const Plugin = () => {
             externalPromises.push(
               loadExternalMarkdown(section).then(
                 // Finished loading external file
-                function (xhr) {
+                function ({xhr}: any) {
                   section.outerHTML = slidify(xhr.responseText, {
                     separator: section.getAttribute('data-separator'),
                     verticalSeparator: section.getAttribute(
@@ -251,7 +252,7 @@ const Plugin = () => {
                 },
 
                 // Failed to load markdown
-                function (xhr, url) {
+                function ({xhr, url}) {
                   section.outerHTML =
                     '<section data-state="alert">' +
                     'ERROR: The attempt to fetch ' +
@@ -297,9 +298,9 @@ const Plugin = () => {
         if (xhr.readyState === 4) {
           // file protocol yields status code 0 (useful for local debug, mobile applications etc.)
           if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 0) {
-            resolve(xhr, url);
+            resolve({xhr, url});
           } else {
-            reject(xhr, url);
+            reject({xhr, url});
           }
         }
       }.bind(this, section, xhr);
@@ -315,7 +316,7 @@ const Plugin = () => {
             '. Make sure that the presentation and the file are served by a HTTP server and the file can be found there. ' +
             e
         );
-        resolve(xhr, url);
+        resolve({xhr, url});
       }
     });
   }
